@@ -15,7 +15,8 @@ ban = "http://127.0.0.1:3000/set_group_ban?"
 with open('wordlist.pickle', 'rb') as f:
     wordlist = pickle.load(f)
 
-blacklist = ["老子他妈"]
+# 违禁词名单
+blacklist = ["老子他妈","你妈","尼玛","傻逼","煞笔"]
 
 
 def private_message(word_list):
@@ -35,12 +36,11 @@ def group_message(word_list):
 
 def check(word_list):
     # 检查是否存在发送消息以外的事件
-    if "notice_type" not in word_list:
+    if "raw_message" in word_list:
         # 违禁词检查
         for i in blacklist:
             if i in word_list["raw_message"]:
                 delete_url = delete + "message_id=" + str(word_list["message_id"])
-                print(delete_url)
                 requests.get(delete_url)
                 send_url = send + "group_id=" + str(word_list["group_id"]) + "&message=触发违禁词"
                 requests.get(send_url)
