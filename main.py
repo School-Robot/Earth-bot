@@ -18,8 +18,8 @@ while True:
     # 接受一个新的连接
     client_socket, addr = tcp_server_socket.accept()
 
-    # 接收数据，最多1024字节
-    message = client_socket.recv(4096).decode()
+    # 接收数据
+    message = client_socket.recv(16384).decode()
 
     # 分离参数
     word_list = word_split.split(message)
