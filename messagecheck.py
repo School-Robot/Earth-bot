@@ -19,6 +19,17 @@ with open('wordlist.pickle', 'rb') as f:
 blacklist = ["老子他妈","你妈","尼玛","傻逼","煞笔"]
 
 
+def filter_heart_beat(message):
+    """
+    过滤心跳检测
+    :param message:
+    :return: bool 是否为心跳检查
+    """
+    if "meta_event_type" in message.keys() and message['meta_event_type'] in ["heartbeat", "lifecycle"]:
+        return True
+    return False
+
+
 def private_message(word_list):
     message = "[私聊]" + word_list["sender"]["nickname"] + ":" + word_list["raw_message"] + "\n"
     print(message)
