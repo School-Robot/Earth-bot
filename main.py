@@ -1,54 +1,31 @@
-import time
-import json
-import threading
-
-import websocket
-
+import socket
 import messagecheck
 import word_split
 
+# 创建TCP socket
+tcp_server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-api_url = 'ws://127.0.0.1:8080'
-bot_id = '1940975548'
+# 设置端口复用，让程序能够立即重新启动而不需要等待操作系统释放端口
+tcp_server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
+# 绑定端口
+tcp_server_socket.bind(('', 8080))
 
-def on_message(ws, message):
-    message = json.loads(message)
-    is_heart_beat = messagecheck.filter_heart_beat(message)
-    if not is_heart_beat:
-        word_list = word_split.split(message)
+# 设置为监听模式
+tcp_server_socket.listen(1)
 
-        messagecheck.check(word_list)
+while True:
+    # 接受一个新的连接
+    client_socket, addr = tcp_server_socket.accept()
 
-    else:
-        pass
+    # 接收数据
+    message = client_socket.recv(16384).decode()
 
+    # 分离参数
+    word_list = word_split.split(message)
 
-def on_error(ws, error):
-    print(f'WebSocket 错误: {error}')
+    # 校验信息并执行
+    messagecheck.check(word_list)
 
-
-def on_close(ws, close_status):
-    print(f'WebSocket 连接已关闭: {close_status}')
-
-
-def on_open(ws):
-    def run():
-        while True:
-            time.sleep(30)  # 保持连接
-
-    thread = threading.Thread(target=run)
-    thread.start()
-
-
-if __name__ == '__main__':
-    header = {
-        'bot_id': bot_id
-    }
-    ws = websocket.WebSocketApp(api_url,
-                                header=header,
-                                on_message=on_message,
-                                on_error=on_error,
-                                on_close=on_close)
-    ws.on_open = on_open
-    ws.run_forever()
+    # 关闭与客户端的连接
+    client_socket.close()
