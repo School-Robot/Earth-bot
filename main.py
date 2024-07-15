@@ -3,23 +3,21 @@ import json
 import threading
 
 import websocket
+from common.message_check import filter_heart_beat, check
 
-import messagecheck
-import word_split
 
 
 api_url = 'ws://127.0.0.1:3001'
-bot_id = '1940975548'
+bot_id = '12345678910'
 auth_token = ''
 
 
 def on_message(ws, message):
     message = json.loads(message)
-    is_heart_beat = messagecheck.filter_heart_beat(message)
+    is_heart_beat = filter_heart_beat(message)
     if not is_heart_beat:
 
-        messagecheck.check(message)
-
+        check(message)
     else:
         pass
 
