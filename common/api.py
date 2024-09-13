@@ -13,7 +13,7 @@ blacklist = ["老子他妈"]
 # 读取词库、图库
 with open('data/wordlist.pickle', 'rb') as f:
     wordlist = pickle.load(f)
-with open('data/wordlist.pickle', 'rb') as i:
+with open('data/img.pickle', 'rb') as i:
     imglist = pickle.load(i)
 
 
